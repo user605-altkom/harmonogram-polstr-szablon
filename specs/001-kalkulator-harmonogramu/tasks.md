@@ -19,10 +19,10 @@ Vitest, katalogi źródłowe, dane przykładowe i test smoke.
 
 **Cel**: przygotować wspólne typy domenowe, granice danych i konwencję testów.
 
-- [ ] T001 [P] Uzupełnić typy `ParametryKredytu`, `WpisSerii`, `Nadplata`, `RataHarmonogramu` i `Harmonogram` w `src/domena/harmonogram.ts`, zachowując kwoty jako całkowite grosze oraz warianty `rowne`/`malejace`, `POLSTR_1M`/`WIBOR_3M` i `obnizRate`/`skrocOkres`.
-- [ ] T002 [P] Rozszerzyć adapter `src/dane/wskazniki.ts` o jawny typ serii i funkcję przekazywania serii do domeny bez modyfikowania plików `dane/*.json`.
-- [ ] T003 [P] Przygotować w `tests/smoke.test.ts` wspólne fabryki parametrów oraz sztucznych serii używane przez testy domeny, bez usuwania istniejących testów danych i strefy czasowej.
-- [ ] T004 Usunąć test szkieletu oczekujący błędu „nie zaimplementowano” z `tests/smoke.test.ts` dopiero wtedy, gdy pierwsza implementacja domeny będzie gotowa do zastąpienia go testem zachowania.
+- [X] T001 [P] Uzupełnić typy `ParametryKredytu`, `WpisSerii`, `Nadplata`, `RataHarmonogramu` i `Harmonogram` w `src/domena/harmonogram.ts`, zachowując kwoty jako całkowite grosze oraz warianty `rowne`/`malejace`, `POLSTR_1M`/`WIBOR_3M` i `obnizRate`/`skrocOkres`.
+- [X] T002 [P] Rozszerzyć adapter `src/dane/wskazniki.ts` o jawny typ serii i funkcję przekazywania serii do domeny bez modyfikowania plików `dane/*.json`.
+- [X] T003 [P] Przygotować w `tests/smoke.test.ts` wspólne fabryki parametrów oraz sztucznych serii używane przez testy domeny, bez usuwania istniejących testów danych i strefy czasowej.
+- [X] T004 Usunąć test szkieletu oczekujący błędu „nie zaimplementowano” z `tests/smoke.test.ts` dopiero wtedy, gdy pierwsza implementacja domeny będzie gotowa do zastąpienia go testem zachowania.
 
 **Punkt kontrolny**: typy domeny i dane wejściowe są ustalone, a `npm test` nadal przechodzi po zmianach testów.
 
@@ -38,16 +38,16 @@ wynosi 400 000,00 zł i saldo końcowe wynosi 0,00 zł.
 
 ### Testy przed implementacją
 
-- [ ] T005 [P] [US1] Dodać test liczby kontrolnej rat równych w `tests/smoke.test.ts`: pierwsza rata około 249472 grosze, ostatnia rata wyrównująca zgodnie z `BRIEF.md`, suma kapitału równa kwocie kredytu.
-- [ ] T006 [P] [US1] Dodać test rat malejących w `tests/smoke.test.ts`: część kapitałowa jest zgodna z planem, raty nie rosną, a saldo końcowe wynosi zero.
-- [ ] T007 [P] [US1] Dodać test zaokrągleń w `tests/smoke.test.ts`: suma `kapitalGr` po wszystkich ratach równa się `kwotaGr`, a ostatnia rata nie tworzy ujemnego salda.
+- [X] T005 [P] [US1] Dodać test liczby kontrolnej rat równych w `tests/smoke.test.ts`: pierwsza rata około 249472 grosze, ostatnia rata wyrównująca zgodnie z `BRIEF.md`, suma kapitału równa kwocie kredytu.
+- [X] T006 [P] [US1] Dodać test rat malejących w `tests/smoke.test.ts`: część kapitałowa jest zgodna z planem, raty nie rosną, a saldo końcowe wynosi zero.
+- [X] T007 [P] [US1] Dodać test zaokrągleń w `tests/smoke.test.ts`: suma `kapitalGr` po wszystkich ratach równa się `kwotaGr`, a ostatnia rata nie tworzy ujemnego salda.
 
 ### Implementacja
 
-- [ ] T008 [US1] Zaimplementować walidację parametrów domeny i daty pierwszej raty w `src/domena/harmonogram.ts`, odrzucając kwotę niedodatnią, liczbę rat niebędącą dodatnią liczbą całkowitą, ujemną marżę i niepoprawną datę.
-- [ ] T009 [US1] Zaimplementować wybór stałej serii wskaźnika przekazanej do domeny oraz obliczanie odsetek jako saldo razy roczna stopa okresu podzielona przez 12 w `src/domena/harmonogram.ts`.
-- [ ] T010 [US1] Zaimplementować raty równe i malejące w `src/domena/harmonogram.ts`, zaokrąglając kwoty do grosza w jednym miejscu i wyrównując ostatnią ratę do salda.
-- [ ] T011 [US1] Zwracać z `src/domena/harmonogram.ts` kompletne `Harmonogram` z numerem, datą, kapitałem, odsetkami, ratą, saldem, sumą odsetek i podsumowaniem pierwszej oraz ostatniej raty.
+- [X] T008 [US1] Zaimplementować walidację parametrów domeny i daty pierwszej raty w `src/domena/harmonogram.ts`, odrzucając kwotę niedodatnią, liczbę rat niebędącą dodatnią liczbą całkowitą, ujemną marżę i niepoprawną datę.
+- [X] T009 [US1] Zaimplementować wybór stałej serii wskaźnika przekazanej do domeny oraz obliczanie odsetek jako saldo razy roczna stopa okresu podzielona przez 12 w `src/domena/harmonogram.ts`.
+- [X] T010 [US1] Zaimplementować raty równe i malejące w `src/domena/harmonogram.ts`, zaokrąglając kwoty do grosza w jednym miejscu i wyrównując ostatnią ratę do salda.
+- [X] T011 [US1] Zwracać z `src/domena/harmonogram.ts` kompletne `Harmonogram` z numerem, datą, kapitałem, odsetkami, ratą, saldem, sumą odsetek i podsumowaniem pierwszej oraz ostatniej raty.
 
 **Punkt kontrolny**: historia US1 działa niezależnie, `npm test` i `npm run typecheck` przechodzą, a liczba kontrolna jest zgodna z tolerancją.
 
@@ -62,15 +62,15 @@ po dacie zmiany, a brak nowego wpisu używa ostatniej znanej wartości.
 
 ### Testy przed implementacją
 
-- [ ] T012 [P] [US2] Dodać test zmiany POLSTR 1M w trakcie spłaty w `tests/smoke.test.ts`, sprawdzając nową stopę od raty przypadającej na datę wpisu.
-- [ ] T013 [P] [US2] Dodać test WIBOR 3M w `tests/smoke.test.ts`, sprawdzając utrzymanie ostatniej znanej wartości pomiędzy wpisami i po ostatnim wpisie serii.
-- [ ] T014 [P] [US2] Dodać test braku wpisu wskaźnika przed pierwszą ratą w `tests/smoke.test.ts`, oczekując jawnego błędu domeny.
+- [X] T012 [P] [US2] Dodać test zmiany POLSTR 1M w trakcie spłaty w `tests/smoke.test.ts`, sprawdzając nową stopę od raty przypadającej na datę wpisu.
+- [X] T013 [P] [US2] Dodać test WIBOR 3M w `tests/smoke.test.ts`, sprawdzając utrzymanie ostatniej znanej wartości pomiędzy wpisami i po ostatnim wpisie serii.
+- [X] T014 [P] [US2] Dodać test braku wpisu wskaźnika przed pierwszą ratą w `tests/smoke.test.ts`, oczekując jawnego błędu domeny.
 
 ### Implementacja
 
-- [ ] T015 [US2] Zaimplementować deterministyczne wyszukiwanie ostatniego `WpisSerii`, którego `od` nie jest późniejsze niż data raty, w `src/domena/harmonogram.ts`.
-- [ ] T016 [US2] Przekazać serie POLSTR 1M i WIBOR 3M z `src/dane/wskazniki.ts` do wywołania domeny oraz zachować ostatnią wartość po końcu serii.
-- [ ] T017 [US2] Zaktualizować testy danych w `tests/smoke.test.ts`, aby potwierdzały kontrakt serii używany przez domenę bez edycji `dane/polstr-1m.json` i `dane/wibor-3m.json`.
+- [X] T015 [US2] Zaimplementować deterministyczne wyszukiwanie ostatniego `WpisSerii`, którego `od` nie jest późniejsze niż data raty, w `src/domena/harmonogram.ts`.
+- [X] T016 [US2] Przekazać serie POLSTR 1M i WIBOR 3M z `src/dane/wskazniki.ts` do wywołania domeny oraz zachować ostatnią wartość po końcu serii.
+- [X] T017 [US2] Zaktualizować testy danych w `tests/smoke.test.ts`, aby potwierdzały kontrakt serii używany przez domenę bez edycji `dane/polstr-1m.json` i `dane/wibor-3m.json`.
 
 **Punkt kontrolny**: obie serie wskaźników i zmiana stopy są testowalne niezależnie od API oraz ekranu.
 
@@ -85,16 +85,16 @@ ma niższe raty od kolejnego miesiąca, a `skrocOkres` zachowuje ratę i kończy
 
 ### Testy przed implementacją
 
-- [ ] T018 [P] [US3] Dodać test nadpłaty `obnizRate` w `tests/smoke.test.ts`, sprawdzając kolejność regularna rata, potem nadpłata, przeliczenie raty od następnego miesiąca i zachowany termin końcowy.
-- [ ] T019 [P] [US3] Dodać test nadpłaty `skrocOkres` w `tests/smoke.test.ts`, sprawdzając zachowaną ratę równą i wcześniejsze zakończenie harmonogramu.
-- [ ] T020 [P] [US3] Dodać test nadpłaty większej niż saldo oraz nadpłaty po końcu okresu w `tests/smoke.test.ts`, sprawdzając brak ujemnego salda i jawny błąd nieprawidłowego miesiąca.
+- [X] T018 [P] [US3] Dodać test nadpłaty `obnizRate` w `tests/smoke.test.ts`, sprawdzając kolejność regularna rata, potem nadpłata, przeliczenie raty od następnego miesiąca i zachowany termin końcowy.
+- [X] T019 [P] [US3] Dodać test nadpłaty `skrocOkres` w `tests/smoke.test.ts`, sprawdzając zachowaną ratę równą i wcześniejsze zakończenie harmonogramu.
+- [X] T020 [P] [US3] Dodać test nadpłaty większej niż saldo oraz nadpłaty po końcu okresu w `tests/smoke.test.ts`, sprawdzając brak ujemnego salda i jawny błąd nieprawidłowego miesiąca.
 
 ### Implementacja
 
-- [ ] T021 [US3] Zaimplementować walidację listy nadpłat w `src/domena/harmonogram.ts`, w tym dodatni miesiąc, dodatnią kwotę w groszach, dozwolony tryb i brak nadpłaty po zakończeniu okresu.
-- [ ] T022 [US3] Zastosować nadpłatę po regularnej racie oraz ograniczyć saldo do zera w `src/domena/harmonogram.ts`.
-- [ ] T023 [US3] Zaimplementować przeliczenie raty na pozostały okres dla `obnizRate` i zachowanie raty dla `skrocOkres` w `src/domena/harmonogram.ts`.
-- [ ] T024 [US3] Uzupełnić `RataHarmonogramu` o `nadplataGr` i zakończenie pętli po wcześniejszej spłacie w `src/domena/harmonogram.ts`.
+- [X] T021 [US3] Zaimplementować walidację listy nadpłat w `src/domena/harmonogram.ts`, w tym dodatni miesiąc, dodatnią kwotę w groszach, dozwolony tryb i brak nadpłaty po zakończeniu okresu.
+- [X] T022 [US3] Zastosować nadpłatę po regularnej racie oraz ograniczyć saldo do zera w `src/domena/harmonogram.ts`.
+- [X] T023 [US3] Zaimplementować przeliczenie raty na pozostały okres dla `obnizRate` i zachowanie raty dla `skrocOkres` w `src/domena/harmonogram.ts`.
+- [X] T024 [US3] Uzupełnić `RataHarmonogramu` o `nadplataGr` i zakończenie pętli po wcześniejszej spłacie w `src/domena/harmonogram.ts`.
 
 **Punkt kontrolny**: oba tryby nadpłat przechodzą testy, suma kapitału i saldo końcowe pozostają poprawne.
 
