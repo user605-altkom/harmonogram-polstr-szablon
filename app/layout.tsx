@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function Uklad({ children }: { children: ReactNode }) {
   return (
     <html lang="pl">
-      <body className="min-h-screen bg-white text-neutral-900 antialiased">{children}</body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { policzHarmonogram, type ParametryKredytu } from '../../../src/domena/harmonogram';
+import { policzHarmonogram, type Nadplata, type ParametryKredytu } from '../../../src/domena/harmonogram';
 import { seriaWskaznika } from '../../../src/dane/wskazniki';
 
 // Route handler jest cienki: parsuje parametry z query string, woła domenę, zwraca JSON.
@@ -8,6 +8,37 @@ import { seriaWskaznika } from '../../../src/dane/wskazniki';
 
 const PRZYKLAD =
   '/api/harmonogram?kwota=400000&liczbaRat=300&marza=2.11&wskaznik=POLSTR_1M&typRat=rowne&pierwszaRata=2026-10-01';
+
+function parsujNadplaty(szukane: URLSearchParams): Nadplata[] | string {
+  const wartosc = szukane.get('nadplaty');
+  if (!wartosc) return [];
+
+  let dane: unknown;
+  try {
+    dane = JSON.parse(wartosc) as unknown;
+  } catch {
+    return 'nadplaty: niepoprawny JSON';
+  }
+  if (!Array.isArray(dane)) return 'nadplaty: oczekiwano listy';
+
+  const nadplaty: Nadplata[] = [];
+  for (const wpis of dane) {
+    if (typeof wpis !== 'object' || wpis === null) return 'nadplaty: niepoprawny wpis';
+    const rekord = wpis as Record<string, unknown>;
+    const miesiac = rekord.miesiac;
+    const kwota = rekord.kwota;
+    const tryb = rekord.tryb;
+    if (
+      typeof miesiac !== 'number' || !Number.isInteger(miesiac) || miesiac <= 0 ||
+      typeof kwota !== 'number' || !Number.isFinite(kwota) || kwota <= 0 ||
+      (tryb !== 'obnizRate' && tryb !== 'skrocOkres')
+    ) {
+      return 'nadplaty: wpis wymaga dodatniego miesiąca, kwoty i poprawnego trybu';
+    }
+    nadplaty.push({ miesiac, kwotaGr: Math.round(kwota * 100), tryb });
+  }
+  return nadplaty;
+}
 
 function parsujParametry(szukane: URLSearchParams): ParametryKredytu | string {
   const kwota = Number(szukane.get('kwota'));
@@ -23,6 +54,8 @@ function parsujParametry(szukane: URLSearchParams): ParametryKredytu | string {
   if (wskaznik !== 'POLSTR_1M' && wskaznik !== 'WIBOR_3M') return 'wskaznik: POLSTR_1M albo WIBOR_3M';
   if (typRat !== 'rowne' && typRat !== 'malejace') return 'typRat: rowne albo malejace';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(pierwszaRata)) return 'pierwszaRata: data YYYY-MM-DD';
+  const nadplaty = parsujNadplaty(szukane);
+  if (typeof nadplaty === 'string') return nadplaty;
 
   return {
     kwotaGr: Math.round(kwota * 100),
@@ -32,7 +65,7 @@ function parsujParametry(szukane: URLSearchParams): ParametryKredytu | string {
     typRat,
     pierwszaRata,
     seriaWskaznika: seriaWskaznika(wskaznik),
-    nadplaty: [],
+    nadplaty,
   };
 }
 
