@@ -27,7 +27,7 @@ function parsujNadplaty(szukane: URLSearchParams): Nadplata[] | string {
     const rekord = wpis as Record<string, unknown>;
     const miesiac = rekord.miesiac;
     const kwota = rekord.kwota;
-    const tryb = rekord.tryb;
+    const tryb = rekord.tryb ?? 'skrocOkres';
     if (
       typeof miesiac !== 'number' || !Number.isInteger(miesiac) || miesiac <= 0 ||
       typeof kwota !== 'number' || !Number.isFinite(kwota) || kwota <= 0 ||

@@ -144,6 +144,28 @@ describe('domena', () => {
     expect(harmonogram.raty.every((rata) => rata.saldoGr >= 0)).toBe(true);
   });
 
+  it.each([
+    ['obnizRate', 203_811, 240],
+    ['skrocOkres', 226_507, 196],
+  ] as const)('CR-A: obsługuje tryb nadpłaty %s z liczbą kontrolną', (tryb, oczekiwanaRata, oczekiwanaLiczbaRat) => {
+    const harmonogram = policzHarmonogram({
+      kwotaGr: 300_000_00,
+      liczbaRat: 240,
+      marza: 0.0211,
+      typRat: 'rowne',
+      wskaznik: 'WIBOR_3M',
+      pierwszaRata: '2026-10-01',
+      seriaWskaznika: [{ od: '2026-10-01', stopa: 0.0455 }],
+      nadplaty: [{ miesiac: 1, kwotaGr: 30_000_00, tryb }],
+    });
+
+    expect(harmonogram.raty[0]?.nadplataGr).toBe(30_000_00);
+    expect(harmonogram.raty[1]?.rataGr).toBe(oczekiwanaRata);
+    expect(harmonogram.raty).toHaveLength(oczekiwanaLiczbaRat);
+    expect(harmonogram.raty.reduce((suma, rata) => suma + rata.kapitalGr + rata.nadplataGr, 0)).toBe(300_000_00);
+    expect(harmonogram.saldoKoncoweGr).toBe(0);
+  });
+
   it('testy działają w strefie Europe/Warsaw', () => {
     expect(process.env.TZ).toBe('Europe/Warsaw');
   });

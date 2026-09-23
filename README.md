@@ -109,6 +109,13 @@ git push -u origin main
 
 Katalog `dane/` zawiera dwie serie wskaźników w formacie JSON: `polstr-1m.json` (miesięcznie, od lipca 2025) i `wibor-3m.json` (kwartalnie, od 2020). Każdy plik ma pola `wskaznik`, `opis`, `uwaga`, `zrodla` i `wartosci` z listą wpisów `{ "od": "YYYY-MM-DD", "stopa": 0.0355 }`. Stopa jest ułamkiem, nie procentem. Wpis obowiązuje od dnia `od` do dnia przed kolejnym wpisem, a po ostatnim wpisie serii obowiązuje ostatnia znana wartość. Wartości są ilustracyjne i przybliżone, szczegóły w polu `uwaga`. Nie edytuj tych plików w trakcie ćwiczenia, testy je wczytują. W kodzie serie są dostępne przez `seriaWskaznika()` z `src/dane/wskazniki.ts`.
 
+### Nadpłaty
+
+Nadpłata jest księgowana po regularnej racie danego miesiąca. Klient może wybrać
+tryb `skrocOkres` (domyślny: rata pozostaje bez zmian, a harmonogram kończy się
+wcześniej) albo `obnizRate` (okres pozostaje bez zmian, a rata jest przeliczana
+od kolejnego miesiąca). Brak pola `tryb` w żądaniu API oznacza `skrocOkres`.
+
 ## Spec-kit
 
 Komendy wywołujesz w czacie Copilota w VS Code (tryb Agent) albo w Copilot CLI. Każda komenda to skill z katalogu `.github/skills/speckit-*/SKILL.md`, skrypty pomocnicze leżą w `.specify/scripts/powershell/`, szablony artefaktów w `.specify/templates/`.
