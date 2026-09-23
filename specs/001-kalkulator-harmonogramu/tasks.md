@@ -20,7 +20,7 @@ Vitest, katalogi źródłowe, dane przykładowe i test smoke.
 **Cel**: przygotować wspólne typy domenowe, granice danych i konwencję testów.
 
 - [X] T001 [P] Uzupełnić typy `ParametryKredytu`, `WpisSerii`, `Nadplata`, `RataHarmonogramu` i `Harmonogram` w `src/domena/harmonogram.ts`, zachowując kwoty jako całkowite grosze oraz warianty `rowne`/`malejace`, `POLSTR_1M`/`WIBOR_3M` i `obnizRate`/`skrocOkres`.
-- [ ] T002 [P] Rozszerzyć adapter `src/dane/wskazniki.ts` o jawny typ serii i funkcję przekazywania serii do domeny bez modyfikowania plików `dane/*.json`.
+- [X] T002 [P] Rozszerzyć adapter `src/dane/wskazniki.ts` o jawny typ serii i funkcję przekazywania serii do domeny bez modyfikowania plików `dane/*.json`.
 - [X] T003 [P] Przygotować w `tests/smoke.test.ts` wspólne fabryki parametrów oraz sztucznych serii używane przez testy domeny, bez usuwania istniejących testów danych i strefy czasowej.
 - [X] T004 Usunąć test szkieletu oczekujący błędu „nie zaimplementowano” z `tests/smoke.test.ts` dopiero wtedy, gdy pierwsza implementacja domeny będzie gotowa do zastąpienia go testem zachowania.
 
@@ -62,15 +62,15 @@ po dacie zmiany, a brak nowego wpisu używa ostatniej znanej wartości.
 
 ### Testy przed implementacją
 
-- [ ] T012 [P] [US2] Dodać test zmiany POLSTR 1M w trakcie spłaty w `tests/smoke.test.ts`, sprawdzając nową stopę od raty przypadającej na datę wpisu.
-- [ ] T013 [P] [US2] Dodać test WIBOR 3M w `tests/smoke.test.ts`, sprawdzając utrzymanie ostatniej znanej wartości pomiędzy wpisami i po ostatnim wpisie serii.
-- [ ] T014 [P] [US2] Dodać test braku wpisu wskaźnika przed pierwszą ratą w `tests/smoke.test.ts`, oczekując jawnego błędu domeny.
+- [X] T012 [P] [US2] Dodać test zmiany POLSTR 1M w trakcie spłaty w `tests/smoke.test.ts`, sprawdzając nową stopę od raty przypadającej na datę wpisu.
+- [X] T013 [P] [US2] Dodać test WIBOR 3M w `tests/smoke.test.ts`, sprawdzając utrzymanie ostatniej znanej wartości pomiędzy wpisami i po ostatnim wpisie serii.
+- [X] T014 [P] [US2] Dodać test braku wpisu wskaźnika przed pierwszą ratą w `tests/smoke.test.ts`, oczekując jawnego błędu domeny.
 
 ### Implementacja
 
-- [ ] T015 [US2] Zaimplementować deterministyczne wyszukiwanie ostatniego `WpisSerii`, którego `od` nie jest późniejsze niż data raty, w `src/domena/harmonogram.ts`.
-- [ ] T016 [US2] Przekazać serie POLSTR 1M i WIBOR 3M z `src/dane/wskazniki.ts` do wywołania domeny oraz zachować ostatnią wartość po końcu serii.
-- [ ] T017 [US2] Zaktualizować testy danych w `tests/smoke.test.ts`, aby potwierdzały kontrakt serii używany przez domenę bez edycji `dane/polstr-1m.json` i `dane/wibor-3m.json`.
+- [X] T015 [US2] Zaimplementować deterministyczne wyszukiwanie ostatniego `WpisSerii`, którego `od` nie jest późniejsze niż data raty, w `src/domena/harmonogram.ts`.
+- [X] T016 [US2] Przekazać serie POLSTR 1M i WIBOR 3M z `src/dane/wskazniki.ts` do wywołania domeny oraz zachować ostatnią wartość po końcu serii.
+- [X] T017 [US2] Zaktualizować testy danych w `tests/smoke.test.ts`, aby potwierdzały kontrakt serii używany przez domenę bez edycji `dane/polstr-1m.json` i `dane/wibor-3m.json`.
 
 **Punkt kontrolny**: obie serie wskaźników i zmiana stopy są testowalne niezależnie od API oraz ekranu.
 

@@ -1,14 +1,8 @@
 import polstr1m from '../../dane/polstr-1m.json';
 import wibor3m from '../../dane/wibor-3m.json';
-import type { ParametryKredytu } from '../domena/harmonogram';
+import type { ParametryKredytu, WpisSerii } from '../domena/harmonogram';
 
-/** Jeden wpis serii wskaźnika: wartość obowiązuje od dnia `od` do dnia przed kolejnym wpisem. */
-export interface WpisSerii {
-  /** Dzień, od którego obowiązuje wartość, YYYY-MM-DD. */
-  od: string;
-  /** Stopa jako ułamek, np. 0.0355 dla 3,55 %. */
-  stopa: number;
-}
+export type { WpisSerii } from '../domena/harmonogram';
 
 const SERIE: Record<ParametryKredytu['wskaznik'], WpisSerii[]> = {
   POLSTR_1M: polstr1m.wartosci,

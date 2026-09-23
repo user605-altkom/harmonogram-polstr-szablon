@@ -26,6 +26,7 @@ describe('dane wskaźników z katalogu dane/', () => {
       expect(wpis.stopa).toBeGreaterThan(0);
       expect(wpis.stopa).toBeLessThan(0.2);
     }
+    expect(seriaWskaznika(wskaznik)).toEqual(seria);
     const daty = seria.map((wpis) => wpis.od);
     expect([...daty].sort()).toEqual(daty);
   });
@@ -61,6 +62,41 @@ describe('domena', () => {
     expect(harmonogram.raty.reduce((suma, rata) => suma + rata.kapitalGr, 0)).toBe(1_000_01);
     expect(harmonogram.raty.every((rata) => rata.saldoGr >= 0)).toBe(true);
     expect(harmonogram.raty.at(-1)?.saldoGr).toBe(0);
+  });
+
+  it('stosuje nową wartość wskaźnika od dnia wpisu', () => {
+    const harmonogram = policzHarmonogram(
+      parametryBazowe({
+        liczbaRat: 4,
+        seriaWskaznika: [
+          { od: '2026-10-01', stopa: 0.03 },
+          { od: '2026-11-01', stopa: 0.06 },
+        ],
+      }),
+    );
+
+    expect(harmonogram.raty[0]?.odsetkiGr).toBe(170_333);
+    expect(harmonogram.raty[1]?.odsetkiGr).toBeGreaterThan(harmonogram.raty[0]?.odsetkiGr ?? 0);
+  });
+
+  it('używa ostatniej znanej wartości po końcu serii', () => {
+    const harmonogram = policzHarmonogram(
+      parametryBazowe({
+        liczbaRat: 4,
+        seriaWskaznika: [{ od: '2026-10-01', stopa: 0.03 }],
+      }),
+    );
+
+    expect(harmonogram.raty).toHaveLength(4);
+    expect(harmonogram.raty[3]?.odsetkiGr).toBeGreaterThan(0);
+  });
+
+  it('odrzuca serię bez wartości przed pierwszą ratą', () => {
+    expect(() =>
+      policzHarmonogram(
+        parametryBazowe({ seriaWskaznika: [{ od: '2026-11-01', stopa: 0.03 }] }),
+      ),
+    ).toThrow('brak wartości wskaźnika');
   });
 
   it('testy działają w strefie Europe/Warsaw', () => {
