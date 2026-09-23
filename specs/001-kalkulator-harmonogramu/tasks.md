@@ -19,10 +19,10 @@ Vitest, katalogi źródłowe, dane przykładowe i test smoke.
 
 **Cel**: przygotować wspólne typy domenowe, granice danych i konwencję testów.
 
-- [ ] T001 [P] Uzupełnić typy `ParametryKredytu`, `WpisSerii`, `Nadplata`, `RataHarmonogramu` i `Harmonogram` w `src/domena/harmonogram.ts`, zachowując kwoty jako całkowite grosze oraz warianty `rowne`/`malejace`, `POLSTR_1M`/`WIBOR_3M` i `obnizRate`/`skrocOkres`.
+- [X] T001 [P] Uzupełnić typy `ParametryKredytu`, `WpisSerii`, `Nadplata`, `RataHarmonogramu` i `Harmonogram` w `src/domena/harmonogram.ts`, zachowując kwoty jako całkowite grosze oraz warianty `rowne`/`malejace`, `POLSTR_1M`/`WIBOR_3M` i `obnizRate`/`skrocOkres`.
 - [ ] T002 [P] Rozszerzyć adapter `src/dane/wskazniki.ts` o jawny typ serii i funkcję przekazywania serii do domeny bez modyfikowania plików `dane/*.json`.
-- [ ] T003 [P] Przygotować w `tests/smoke.test.ts` wspólne fabryki parametrów oraz sztucznych serii używane przez testy domeny, bez usuwania istniejących testów danych i strefy czasowej.
-- [ ] T004 Usunąć test szkieletu oczekujący błędu „nie zaimplementowano” z `tests/smoke.test.ts` dopiero wtedy, gdy pierwsza implementacja domeny będzie gotowa do zastąpienia go testem zachowania.
+- [X] T003 [P] Przygotować w `tests/smoke.test.ts` wspólne fabryki parametrów oraz sztucznych serii używane przez testy domeny, bez usuwania istniejących testów danych i strefy czasowej.
+- [X] T004 Usunąć test szkieletu oczekujący błędu „nie zaimplementowano” z `tests/smoke.test.ts` dopiero wtedy, gdy pierwsza implementacja domeny będzie gotowa do zastąpienia go testem zachowania.
 
 **Punkt kontrolny**: typy domeny i dane wejściowe są ustalone, a `npm test` nadal przechodzi po zmianach testów.
 
@@ -38,16 +38,16 @@ wynosi 400 000,00 zł i saldo końcowe wynosi 0,00 zł.
 
 ### Testy przed implementacją
 
-- [ ] T005 [P] [US1] Dodać test liczby kontrolnej rat równych w `tests/smoke.test.ts`: pierwsza rata około 249472 grosze, ostatnia rata wyrównująca zgodnie z `BRIEF.md`, suma kapitału równa kwocie kredytu.
-- [ ] T006 [P] [US1] Dodać test rat malejących w `tests/smoke.test.ts`: część kapitałowa jest zgodna z planem, raty nie rosną, a saldo końcowe wynosi zero.
-- [ ] T007 [P] [US1] Dodać test zaokrągleń w `tests/smoke.test.ts`: suma `kapitalGr` po wszystkich ratach równa się `kwotaGr`, a ostatnia rata nie tworzy ujemnego salda.
+- [X] T005 [P] [US1] Dodać test liczby kontrolnej rat równych w `tests/smoke.test.ts`: pierwsza rata około 249472 grosze, ostatnia rata wyrównująca zgodnie z `BRIEF.md`, suma kapitału równa kwocie kredytu.
+- [X] T006 [P] [US1] Dodać test rat malejących w `tests/smoke.test.ts`: część kapitałowa jest zgodna z planem, raty nie rosną, a saldo końcowe wynosi zero.
+- [X] T007 [P] [US1] Dodać test zaokrągleń w `tests/smoke.test.ts`: suma `kapitalGr` po wszystkich ratach równa się `kwotaGr`, a ostatnia rata nie tworzy ujemnego salda.
 
 ### Implementacja
 
-- [ ] T008 [US1] Zaimplementować walidację parametrów domeny i daty pierwszej raty w `src/domena/harmonogram.ts`, odrzucając kwotę niedodatnią, liczbę rat niebędącą dodatnią liczbą całkowitą, ujemną marżę i niepoprawną datę.
-- [ ] T009 [US1] Zaimplementować wybór stałej serii wskaźnika przekazanej do domeny oraz obliczanie odsetek jako saldo razy roczna stopa okresu podzielona przez 12 w `src/domena/harmonogram.ts`.
-- [ ] T010 [US1] Zaimplementować raty równe i malejące w `src/domena/harmonogram.ts`, zaokrąglając kwoty do grosza w jednym miejscu i wyrównując ostatnią ratę do salda.
-- [ ] T011 [US1] Zwracać z `src/domena/harmonogram.ts` kompletne `Harmonogram` z numerem, datą, kapitałem, odsetkami, ratą, saldem, sumą odsetek i podsumowaniem pierwszej oraz ostatniej raty.
+- [X] T008 [US1] Zaimplementować walidację parametrów domeny i daty pierwszej raty w `src/domena/harmonogram.ts`, odrzucając kwotę niedodatnią, liczbę rat niebędącą dodatnią liczbą całkowitą, ujemną marżę i niepoprawną datę.
+- [X] T009 [US1] Zaimplementować wybór stałej serii wskaźnika przekazanej do domeny oraz obliczanie odsetek jako saldo razy roczna stopa okresu podzielona przez 12 w `src/domena/harmonogram.ts`.
+- [X] T010 [US1] Zaimplementować raty równe i malejące w `src/domena/harmonogram.ts`, zaokrąglając kwoty do grosza w jednym miejscu i wyrównując ostatnią ratę do salda.
+- [X] T011 [US1] Zwracać z `src/domena/harmonogram.ts` kompletne `Harmonogram` z numerem, datą, kapitałem, odsetkami, ratą, saldem, sumą odsetek i podsumowaniem pierwszej oraz ostatniej raty.
 
 **Punkt kontrolny**: historia US1 działa niezależnie, `npm test` i `npm run typecheck` przechodzą, a liczba kontrolna jest zgodna z tolerancją.
 

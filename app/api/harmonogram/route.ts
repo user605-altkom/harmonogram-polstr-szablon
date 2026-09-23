@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { policzHarmonogram, type ParametryKredytu } from '../../../src/domena/harmonogram';
+import { seriaWskaznika } from '../../../src/dane/wskazniki';
 
 // Route handler jest cienki: parsuje parametry z query string, woła domenę, zwraca JSON.
 // Żadnych obliczeń finansowych w tym pliku. Przeliczenie jednostek wejścia
@@ -30,6 +31,7 @@ function parsujParametry(szukane: URLSearchParams): ParametryKredytu | string {
     wskaznik,
     typRat,
     pierwszaRata,
+    seriaWskaznika: seriaWskaznika(wskaznik),
   };
 }
 
