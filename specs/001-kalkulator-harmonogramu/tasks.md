@@ -85,16 +85,16 @@ ma niższe raty od kolejnego miesiąca, a `skrocOkres` zachowuje ratę i kończy
 
 ### Testy przed implementacją
 
-- [ ] T018 [P] [US3] Dodać test nadpłaty `obnizRate` w `tests/smoke.test.ts`, sprawdzając kolejność regularna rata, potem nadpłata, przeliczenie raty od następnego miesiąca i zachowany termin końcowy.
-- [ ] T019 [P] [US3] Dodać test nadpłaty `skrocOkres` w `tests/smoke.test.ts`, sprawdzając zachowaną ratę równą i wcześniejsze zakończenie harmonogramu.
-- [ ] T020 [P] [US3] Dodać test nadpłaty większej niż saldo oraz nadpłaty po końcu okresu w `tests/smoke.test.ts`, sprawdzając brak ujemnego salda i jawny błąd nieprawidłowego miesiąca.
+- [X] T018 [P] [US3] Dodać test nadpłaty `obnizRate` w `tests/smoke.test.ts`, sprawdzając kolejność regularna rata, potem nadpłata, przeliczenie raty od następnego miesiąca i zachowany termin końcowy.
+- [X] T019 [P] [US3] Dodać test nadpłaty `skrocOkres` w `tests/smoke.test.ts`, sprawdzając zachowaną ratę równą i wcześniejsze zakończenie harmonogramu.
+- [X] T020 [P] [US3] Dodać test nadpłaty większej niż saldo oraz nadpłaty po końcu okresu w `tests/smoke.test.ts`, sprawdzając brak ujemnego salda i jawny błąd nieprawidłowego miesiąca.
 
 ### Implementacja
 
-- [ ] T021 [US3] Zaimplementować walidację listy nadpłat w `src/domena/harmonogram.ts`, w tym dodatni miesiąc, dodatnią kwotę w groszach, dozwolony tryb i brak nadpłaty po zakończeniu okresu.
-- [ ] T022 [US3] Zastosować nadpłatę po regularnej racie oraz ograniczyć saldo do zera w `src/domena/harmonogram.ts`.
-- [ ] T023 [US3] Zaimplementować przeliczenie raty na pozostały okres dla `obnizRate` i zachowanie raty dla `skrocOkres` w `src/domena/harmonogram.ts`.
-- [ ] T024 [US3] Uzupełnić `RataHarmonogramu` o `nadplataGr` i zakończenie pętli po wcześniejszej spłacie w `src/domena/harmonogram.ts`.
+- [X] T021 [US3] Zaimplementować walidację listy nadpłat w `src/domena/harmonogram.ts`, w tym dodatni miesiąc, dodatnią kwotę w groszach, dozwolony tryb i brak nadpłaty po zakończeniu okresu.
+- [X] T022 [US3] Zastosować nadpłatę po regularnej racie oraz ograniczyć saldo do zera w `src/domena/harmonogram.ts`.
+- [X] T023 [US3] Zaimplementować przeliczenie raty na pozostały okres dla `obnizRate` i zachowanie raty dla `skrocOkres` w `src/domena/harmonogram.ts`.
+- [X] T024 [US3] Uzupełnić `RataHarmonogramu` o `nadplataGr` i zakończenie pętli po wcześniejszej spłacie w `src/domena/harmonogram.ts`.
 
 **Punkt kontrolny**: oba tryby nadpłat przechodzą testy, suma kapitału i saldo końcowe pozostają poprawne.
 

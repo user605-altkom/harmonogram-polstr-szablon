@@ -9,11 +9,18 @@ export interface ParametryKredytu {
   /** Data pierwszej raty w formacie YYYY-MM-DD. */
   pierwszaRata: string;
   seriaWskaznika: WpisSerii[];
+  nadplaty: Nadplata[];
 }
 
 export interface WpisSerii {
   od: string;
   stopa: number;
+}
+
+export interface Nadplata {
+  miesiac: number;
+  kwotaGr: number;
+  tryb: 'obnizRate' | 'skrocOkres';
 }
 
 export interface RataHarmonogramu {
@@ -57,6 +64,17 @@ function sprawdzParametry(parametry: ParametryKredytu): void {
   if (parametry.seriaWskaznika.length === 0) {
     throw new Error('seria wskaźnika nie może być pusta');
   }
+  for (const nadplata of parametry.nadplaty) {
+    if (!Number.isInteger(nadplata.miesiac) || nadplata.miesiac < 1 || nadplata.miesiac > parametry.liczbaRat) {
+      throw new Error('nadpłata musi przypadać na istniejący miesiąc harmonogramu');
+    }
+    if (!Number.isInteger(nadplata.kwotaGr) || nadplata.kwotaGr <= 0) {
+      throw new Error('kwota nadpłaty musi być dodatnią liczbą całkowitą w groszach');
+    }
+    if (nadplata.tryb !== 'obnizRate' && nadplata.tryb !== 'skrocOkres') {
+      throw new Error('nieprawidłowy tryb nadpłaty');
+    }
+  }
 }
 
 function dataRaty(pierwszaRata: string, numerRaty: number): string {
@@ -95,7 +113,8 @@ export function policzHarmonogram(parametry: ParametryKredytu): Harmonogram {
   let saldoGr = parametry.kwotaGr;
   const raty: RataHarmonogramu[] = [];
   const stopaRoczna = stopaDlaDaty(parametry.seriaWskaznika, parametry.pierwszaRata) + parametry.marza;
-  const rataRownaGr = rataRowna(saldoGr, stopaRoczna, parametry.liczbaRat);
+  let rataRownaGr = rataRowna(saldoGr, stopaRoczna, parametry.liczbaRat);
+  const nadplaty = new Map(parametry.nadplaty.map((nadplata) => [nadplata.miesiac, nadplata]));
 
   for (let numer = 1; numer <= parametry.liczbaRat && saldoGr > 0; numer += 1) {
     const data = dataRaty(parametry.pierwszaRata, numer);
@@ -110,7 +129,16 @@ export function policzHarmonogram(parametry: ParametryKredytu): Harmonogram {
       : Math.min(saldoGr, Math.max(0, zaplanowanyKapitalGr));
     const rataGr = kapitalGr + odsetkiGr;
     saldoGr -= kapitalGr;
-    raty.push({ numer, data, kapitalGr, odsetkiGr, rataGr, nadplataGr: 0, saldoGr });
+    const nadplata = nadplaty.get(numer);
+    const nadplataGr = nadplata ? Math.min(saldoGr, nadplata.kwotaGr) : 0;
+    saldoGr -= nadplataGr;
+    raty.push({ numer, data, kapitalGr, odsetkiGr, rataGr, nadplataGr, saldoGr });
+
+    if (nadplata && saldoGr > 0 && nadplata.tryb === 'obnizRate' && numer < parametry.liczbaRat) {
+      const dataNastepnejRaty = dataRaty(parametry.pierwszaRata, numer + 1);
+      const stopaNastepnegoOkresu = stopaDlaDaty(parametry.seriaWskaznika, dataNastepnejRaty) + parametry.marza;
+      rataRownaGr = rataRowna(saldoGr, stopaNastepnegoOkresu, parametry.liczbaRat - numer);
+    }
   }
 
   const ostatniaRata = raty.at(-1);

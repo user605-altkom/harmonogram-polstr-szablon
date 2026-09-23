@@ -13,6 +13,7 @@ function parametryBazowe(overrides: Partial<ParametryKredytu> = {}): ParametryKr
     wskaznik: 'POLSTR_1M',
     pierwszaRata: '2026-10-01',
     seriaWskaznika: stalaSeria,
+    nadplaty: [],
     ...overrides,
   };
 }
@@ -97,6 +98,50 @@ describe('domena', () => {
         parametryBazowe({ seriaWskaznika: [{ od: '2026-11-01', stopa: 0.03 }] }),
       ),
     ).toThrow('brak wartości wskaźnika');
+  });
+
+  it('stosuje nadpłatę po racie i obniża kolejne raty', () => {
+    const bezNadplaty = policzHarmonogram(parametryBazowe({ liczbaRat: 4, nadplaty: [] }));
+    const zNadplata = policzHarmonogram(
+      parametryBazowe({
+        liczbaRat: 4,
+        nadplaty: [{ miesiac: 1, kwotaGr: 50_000, tryb: 'obnizRate' }],
+      }),
+    );
+
+    expect(zNadplata.raty[0]?.nadplataGr).toBe(50_000);
+    expect(zNadplata.raty[1]?.rataGr).toBeLessThan(bezNadplaty.raty[1]?.rataGr ?? 0);
+    expect(zNadplata.raty).toHaveLength(4);
+    expect(zNadplata.saldoKoncoweGr).toBe(0);
+  });
+
+  it('stosuje nadpłatę i skraca okres przy zachowaniu raty', () => {
+    const bezNadplaty = policzHarmonogram(parametryBazowe({ liczbaRat: 12, nadplaty: [] }));
+    const zNadplata = policzHarmonogram(
+      parametryBazowe({
+        liczbaRat: 12,
+        nadplaty: [{ miesiac: 1, kwotaGr: 100_000_00, tryb: 'skrocOkres' }],
+      }),
+    );
+
+    expect(zNadplata.raty[0]?.nadplataGr).toBe(100_000_00);
+    expect(zNadplata.raty[1]?.rataGr).toBe(bezNadplaty.raty[1]?.rataGr);
+    expect(zNadplata.raty.length).toBeLessThan(bezNadplaty.raty.length);
+    expect(zNadplata.saldoKoncoweGr).toBe(0);
+  });
+
+  it('odrzuca nadpłatę po końcu okresu i nie tworzy ujemnego salda', () => {
+    expect(() =>
+      policzHarmonogram(
+        parametryBazowe({ liczbaRat: 3, nadplaty: [{ miesiac: 4, kwotaGr: 1, tryb: 'obnizRate' }] }),
+      ),
+    ).toThrow('nadpłata musi przypadać');
+
+    const harmonogram = policzHarmonogram(
+      parametryBazowe({ liczbaRat: 3, nadplaty: [{ miesiac: 1, kwotaGr: 999_999_99, tryb: 'skrocOkres' }] }),
+    );
+    expect(harmonogram.raty[0]?.saldoGr).toBe(0);
+    expect(harmonogram.raty.every((rata) => rata.saldoGr >= 0)).toBe(true);
   });
 
   it('testy działają w strefie Europe/Warsaw', () => {
