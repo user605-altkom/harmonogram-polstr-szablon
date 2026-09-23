@@ -1,50 +1,57 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Konstytucja projektu Harmonogram POLSTR
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Domena pozostaje czysta
+Logika obliczeń musi znajdować się w `src/domena/` jako czyste funkcje TypeScript.
+Kod domenowy nie może zależeć od Reacta, Next.js, I/O ani zegara systemowego.
+Każda funkcja domenowa musi być deterministyczna i możliwa do przetestowania
+niezależnie od interfejsu użytkownika.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Pieniądze i zaokrąglenia są jawne
+Kwoty muszą być reprezentowane w groszach jako liczby całkowite albo według jednej
+wyraźnie udokumentowanej konwencji. Zaokrąglenie musi odbywać się w jednym,
+ustalonym miejscu. Harmonogram musi zapewniać, że suma spłat kapitału po
+zaokrągleniach jest równa kwocie kredytu.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Test najpierw
+Każda zmiana logiki obliczeń musi mieć test w katalogu `tests/`, napisany przed
+implementacją. Testy domeny muszą obejmować liczby kontrolne i przypadki graniczne,
+w szczególności raty równe, raty malejące, zmianę wskaźnika i nadpłaty.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Warstwy mają wyraźne odpowiedzialności
+Moduł danych w `src/dane/` udostępnia serie wskaźników zaimportowane z plików
+JSON. Route handler `app/api/harmonogram/route.ts` może parsować parametry
+i wywoływać domenę, ale nie może zawierać obliczeń. Ekran `app/page.tsx` pobiera
+dane przez API i nie powiela logiki domenowej.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Prostota i brak nieuzasadnionych zależności
+Implementacja MVP musi używać istniejącego stosu Next.js, TypeScript, Tailwind
+i Vitest. Nowa zależność wymaga uzasadnienia w planie lub PR. Rozwiązanie ma
+realizować wymagania MVP bez przedwczesnych abstrakcji i funkcji spoza zakresu.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Ograniczenia techniczne
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Projekt używa Next.js App Router i TypeScript strict. Dane wskaźników są
+odczytywane z istniejących plików `dane/*.json`; tych plików nie wolno zmieniać
+bez wyraźnego polecenia. Dokumenty, komentarze w kodzie, nazwy domenowe
+i komunikaty commitów są pisane po polsku. Interfejs nie używa bibliotek UI.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Proces wytwarzania
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Praca przebiega fazami opisanymi w `tasks.md`. Każda faza ma osobną gałąź,
+mały commit i PR. Po zakończeniu fazy praca zatrzymuje się do czasu przeglądu.
+Przed uznaniem fazy za gotową muszą przejść `npm test`, `npm run typecheck`
+i `npm run build`. Zmiany implementacyjne są wykonywane według kolejności:
+test, implementacja, walidacja, review.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Ta konstytucja jest nadrzędna wobec lokalnych praktyk, chyba że późniejsza
+decyzja projektowa jawnie ją zmieni. Zmiana konstytucji wymaga aktualizacji
+wersji, daty, raportu wpływu oraz uzasadnienia w PR. Wersja jest zgodna z semantyką:
+MAJOR oznacza niezgodną zmianę zasad, MINOR dodanie lub istotne rozszerzenie
+zasady, a PATCH doprecyzowanie bez zmiany znaczenia. Każdy PR musi uwzględniać
+zgodność z konstytucją, a naruszenie zasady wymaga jawnego uzasadnienia.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-09-23 | **Last Amended**: 2026-09-23
