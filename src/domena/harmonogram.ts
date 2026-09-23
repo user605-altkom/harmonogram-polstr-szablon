@@ -107,6 +107,18 @@ function rataRowna(saldoGr: number, stopaRoczna: number, liczbaRat: number): num
   return Math.round(rata);
 }
 
+function liczbaRatDoSplacenia(saldoGr: number, stopaRoczna: number, rataGr: number): number {
+  const stopaMiesieczna = stopaRoczna / 12;
+  if (stopaMiesieczna === 0) {
+    return Math.max(1, Math.ceil(saldoGr / rataGr));
+  }
+  const rataPoOdsetkachGr = rataGr - saldoGr * stopaMiesieczna;
+  if (rataPoOdsetkachGr <= 0) {
+    return 1;
+  }
+  return Math.max(1, Math.ceil(Math.log(rataGr / rataPoOdsetkachGr) / Math.log(1 + stopaMiesieczna)));
+}
+
 export function policzHarmonogram(parametry: ParametryKredytu): Harmonogram {
   sprawdzParametry(parametry);
 
@@ -115,16 +127,17 @@ export function policzHarmonogram(parametry: ParametryKredytu): Harmonogram {
   const stopaRoczna = stopaDlaDaty(parametry.seriaWskaznika, parametry.pierwszaRata) + parametry.marza;
   let rataRownaGr = rataRowna(saldoGr, stopaRoczna, parametry.liczbaRat);
   const nadplaty = new Map(parametry.nadplaty.map((nadplata) => [nadplata.miesiac, nadplata]));
+  let liczbaRatMaksymalna = parametry.liczbaRat;
 
-  for (let numer = 1; numer <= parametry.liczbaRat && saldoGr > 0; numer += 1) {
+  for (let numer = 1; numer <= liczbaRatMaksymalna && saldoGr > 0; numer += 1) {
     const data = dataRaty(parametry.pierwszaRata, numer);
     const stopaOkresu = stopaDlaDaty(parametry.seriaWskaznika, data) + parametry.marza;
     const odsetkiGr = Math.round((saldoGr * stopaOkresu) / 12);
-    const pozostaleRat = parametry.liczbaRat - numer + 1;
+    const pozostaleRat = liczbaRatMaksymalna - numer + 1;
     const zaplanowanyKapitalGr = parametry.typRat === 'rowne'
       ? rataRownaGr - odsetkiGr
       : Math.round(saldoGr / pozostaleRat);
-    const kapitalGr = numer === parametry.liczbaRat
+    const kapitalGr = numer === liczbaRatMaksymalna
       ? saldoGr
       : Math.min(saldoGr, Math.max(0, zaplanowanyKapitalGr));
     const rataGr = kapitalGr + odsetkiGr;
@@ -138,6 +151,13 @@ export function policzHarmonogram(parametry: ParametryKredytu): Harmonogram {
       const dataNastepnejRaty = dataRaty(parametry.pierwszaRata, numer + 1);
       const stopaNastepnegoOkresu = stopaDlaDaty(parametry.seriaWskaznika, dataNastepnejRaty) + parametry.marza;
       rataRownaGr = rataRowna(saldoGr, stopaNastepnegoOkresu, parametry.liczbaRat - numer);
+    }
+
+    if (nadplata && saldoGr > 0 && nadplata.tryb === 'skrocOkres' && numer < liczbaRatMaksymalna) {
+      const dataNastepnejRaty = dataRaty(parametry.pierwszaRata, numer + 1);
+      const stopaNastepnegoOkresu = stopaDlaDaty(parametry.seriaWskaznika, dataNastepnejRaty) + parametry.marza;
+      const pozostaleMiesiace = liczbaRatDoSplacenia(saldoGr, stopaNastepnegoOkresu, rataRownaGr);
+      liczbaRatMaksymalna = Math.min(liczbaRatMaksymalna, numer + pozostaleMiesiace);
     }
   }
 

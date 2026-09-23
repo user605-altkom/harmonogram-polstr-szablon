@@ -53,7 +53,7 @@ export default function Strona() {
     try { ustawHarmonogram(await pobierzHarmonogram(zbudujQuery(formularz, nadplaty))); ustawStan('sukces'); }
     catch (bladZapytania) { ustawStan('blad'); ustawBlad(bladZapytania instanceof Error ? bladZapytania.message : 'Nie udało się obliczyć harmonogramu.'); }
   };
-  const dodajNadplate = () => { const id = ostatnieId + 1; ustawOstatnieId(id); ustawNadplaty((poprzednie) => [...poprzednie, { id, miesiac: '1', kwota: '1000', tryb: 'obnizRate' }]); };
+  const dodajNadplate = () => { const id = ostatnieId + 1; ustawOstatnieId(id); ustawNadplaty((poprzednie) => [...poprzednie, { id, miesiac: '1', kwota: '1000', tryb: 'skrocOkres' }]); };
   const aktualizujNadplate = (id: number, zmiana: Partial<NadplataFormularza>) => ustawNadplaty((poprzednie) => poprzednie.map((nadplata) => nadplata.id === id ? { ...nadplata, ...zmiana } : nadplata));
 
   return (

@@ -43,4 +43,21 @@ describe('GET /api/harmonogram', () => {
     expect(odpowiedz.status).toBe(200);
     expect(dane.raty?.[0]?.nadplataGr).toBe(100_000);
   });
+
+  it('domyślnie wybiera skrócenie okresu, gdy nadpłata nie ma trybu', async () => {
+    const brakTrybu = encodeURIComponent(JSON.stringify([{ miesiac: 1, kwota: 30000 }]));
+    const jawnyTryb = encodeURIComponent(JSON.stringify([{ miesiac: 1, kwota: 30000, tryb: 'skrocOkres' }]));
+    const odpowiedz = await GET(
+      request(`kwota=300000&liczbaRat=240&marza=2.11&wskaznik=WIBOR_3M&typRat=rowne&pierwszaRata=2026-10-01&nadplaty=${brakTrybu}`),
+    );
+    const odpowiedzJawna = await GET(
+      request(`kwota=300000&liczbaRat=240&marza=2.11&wskaznik=WIBOR_3M&typRat=rowne&pierwszaRata=2026-10-01&nadplaty=${jawnyTryb}`),
+    );
+    const dane = await odpowiedz.json();
+    const daneJawne = await odpowiedzJawna.json();
+
+    expect(odpowiedz.status).toBe(200);
+    expect(odpowiedzJawna.status).toBe(200);
+    expect(dane).toEqual(daneJawne);
+  });
 });
