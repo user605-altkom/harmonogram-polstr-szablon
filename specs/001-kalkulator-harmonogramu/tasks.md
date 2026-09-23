@@ -111,16 +111,28 @@ a ekran pokazuje wynik i pozwala pobrać kompletny CSV.
 
 - [ ] T025 [P] [US4] Dodać test parsowania błędnych parametrów route handlera w `tests/smoke.test.ts` lub wydzielonym `tests/api.test.ts`, oczekując statusu 400 i pola `blad` bez częściowego wyniku.
 - [ ] T026 [P] [US4] Dodać test kontraktu poprawnej odpowiedzi w `tests/api.test.ts`, sprawdzając status 200, pola podsumowania i wiersze tabeli zgodne z `contracts/harmonogram-api.md`.
+- [ ] T027 [P] [US4] Dodać test serializacji listy nadpłat w `tests/api.test.ts`, sprawdzając format parametru `nadplaty`, kwoty w złotych i tryby `obnizRate`/`skrocOkres`.
+- [ ] T028 [P] [US4] Przygotować w `tests/page.test.tsx` test stanów ekranu: pusty wynik, ładowanie, błąd 400 i poprawny wynik, bez testowania obliczeń finansowych w React.
 
 ### Implementacja
 
-- [ ] T027 [US4] Rozszerzyć parsowanie query string i nadpłat w `app/api/harmonogram/route.ts`, konwertując złote na grosze i punkty procentowe na ułamki bez przenoszenia obliczeń do route handlera.
-- [ ] T028 [US4] Podłączyć `app/api/harmonogram/route.ts` do domeny i danych wskaźników, zwracając kontrakt 200 oraz błędy 400 opisane w `contracts/harmonogram-api.md`.
-- [ ] T029 [US4] Zaimplementować w `app/page.tsx` formularz parametrów, wybór wskaźnika i typu rat, listę nadpłat oraz obsługę stanów ładowania, błędu i pustego wyniku.
-- [ ] T030 [US4] Wyświetlić w `app/page.tsx` pierwszą i ostatnią ratę, sumę odsetek oraz tabelę numer, data, kapitał, odsetki, rata i saldo.
-- [ ] T031 [US4] Dodać w `app/page.tsx` eksport kompletnej tabeli do CSV po stronie przeglądarki, bez nowej biblioteki UI lub eksportu przez serwer.
+- [ ] T029 [US4] Rozszerzyć parsowanie query string i nadpłat w `app/api/harmonogram/route.ts`, konwertując złote na grosze i punkty procentowe na ułamki bez przenoszenia obliczeń do route handlera.
+- [ ] T030 [US4] Podłączyć `app/api/harmonogram/route.ts` do domeny i danych wskaźników, zwracając kontrakt 200 oraz błędy 400 opisane w `contracts/harmonogram-api.md`.
+- [ ] T031 [US4] Zdefiniować w `app/page.tsx` typy odpowiedzi API, stan formularza, stan żądania oraz funkcje `formatujZl`, budowania `URLSearchParams` i mapowania groszy na prezentację w złotych.
+- [ ] T032 [US4] Wydzielić w `app/page.tsx` jedyną funkcję kontaktu z backendem `pobierzHarmonogram` oraz wyraźnie oznaczony blok `TRYB_DEMO`, który można usunąć lub wyłączyć bez zmiany komponentów widoku.
+- [ ] T033 [US4] Odtworzyć w `app/page.tsx` layout z `Harmonogram kredytu POLSTR/export/app/page.tsx`: ciemny motyw Nocturne, nagłówek z nazwą i opisem, tag wybranego wskaźnika, opcjonalny tag „Tryb demonstracyjny” oraz dwie kolumny panel formularza/wynik.
+- [ ] T034 [US4] Zaimplementować formularz w `app/page.tsx` z polami kwota, liczba rat, data pierwszej raty, marża, wskaźnik POLSTR/WIBOR i typ rat równych/malejących, wartościami domyślnymi, jednostkami i walidacją zakresów widocznych w eksporcie designu.
+- [ ] T035 [US4] Zaimplementować sekcję nadpłat zgodną z designem: licznik, przycisk „Dodaj nadpłatę” z ikoną, numer raty, kwota, wybór trybu, przycisk usuwania z etykietą ARIA i stan „Brak zaplanowanych nadpłat”.
+- [ ] T036 [US4] Zaimplementować stany ekranu: pusty wynik, ładowanie, sukces i błąd, z paskiem ładowania, komunikatem po polsku oraz `aria-live`; nie wyświetlać częściowego wyniku.
+- [ ] T037 [US4] Zaimplementować podsumowanie jako cztery zwarte pola: pierwsza rata z datą, ostatnia rata z datą, suma odsetek z liczbą rat oraz saldo końcowe z opisem; wyróżnić pierwszą ratę akcentem.
+- [ ] T038 [US4] Zaimplementować nagłówek tabeli z akcjami „Pierwsza rata”, „Ostatnia rata” i „Eksport CSV” oraz przewijanie kontenera do pierwszego i ostatniego wiersza.
+- [ ] T039 [US4] Zaimplementować tabelę z caption dla czytników ekranu, sticky headerem, kolumnami numer, data, kapitał, odsetki, rata, nadpłata i saldo, wyrównaniem liczb do prawej oraz przewijaniem poziomym i pionowym.
+- [ ] T040 [US4] Dodać eksport kompletnej tabeli do CSV po stronie przeglądarki, z nagłówkami, BOM dla polskich znaków, separatorem zgodnym z arkuszami i bez endpointu eksportu.
+- [ ] T041 [US4] Dopracować `app/page.tsx` pod kątem dostępności: `fieldset`/`legend`, `aria-invalid`, `aria-describedby`, semantyczne nagłówki, obsługa klawiatury, focus, kontrast i brak informacji przekazywanej wyłącznie kolorem.
+- [ ] T042 [US4] Dodać do `app/globals.css` tokeny Nocturne z eksportu `Harmonogram kredytu POLSTR/export/app/globals.css`, stany focus, animacje pojawiania i paska ładowania oraz `prefers-reduced-motion`, bez zależności od `_ds/` i bez importowania runtime design toola.
 
-**Punkt kontrolny**: endpoint i ekran realizują kompletne MVP, a CSV zawiera nagłówki i wszystkie wiersze wyniku.
+**Punkt kontrolny**: endpoint i ekran realizują kompletne MVP, mock jest wyraźnie wymienialny,
+a CSV zawiera nagłówki i wszystkie wiersze wyniku.
 
 ---
 
@@ -128,11 +140,13 @@ a ekran pokazuje wynik i pozwala pobrać kompletny CSV.
 
 **Cel**: potwierdzić gotowość MVP i zgodność z dokumentacją.
 
-- [ ] T032 [P] Zaktualizować komentarze i nazwy domenowe po polsku w zmienionych plikach `src/domena/harmonogram.ts`, `src/dane/wskazniki.ts` i `app/api/harmonogram/route.ts`.
-- [ ] T033 [P] Sprawdzić responsywność i czytelność formularza oraz tabeli w `app/page.tsx` bez dodawania biblioteki UI.
-- [ ] T034 Uruchomić scenariusze z `specs/001-kalkulator-harmonogramu/quickstart.md` i poprawić rozbieżności między kontraktem a implementacją.
-- [ ] T035 Uruchomić `npm test`, `npm run typecheck`, `npm run lint` i `npm run build`; zapisać wynik kontroli przed PR.
-- [ ] T036 Sprawdzić zgodność implementacji ze `spec.md`, `plan.md`, `data-model.md` i `contracts/harmonogram-api.md` przed utworzeniem PR.
+- [ ] T043 [P] Zaktualizować komentarze i nazwy domenowe po polsku w zmienionych plikach `src/domena/harmonogram.ts`, `src/dane/wskazniki.ts` i `app/api/harmonogram/route.ts`.
+- [ ] T044 [P] Sprawdzić desktop, laptop, tablet i telefon dla `app/page.tsx`, w szczególności dwie kolumny, brak przepełnienia, sticky header, przewijanie tabeli, czytelność kwot i wygodę pól dotykowych.
+- [ ] T045 [P] Sprawdzić wszystkie stany designu: brak wyniku, ładowanie z paskiem, błąd, sukces, pusta lista nadpłat, wynik demonstracyjny i brak danych tabeli.
+- [ ] T046 [P] Porównać implementację z `Harmonogram kredytu POLSTR/Harmonogram POLSTR.dc.html`, zachowując hierarchię, kontrast, tag wskaźnika, podsumowanie i akcje tabeli, ale bez kopiowania runtime `_ds/`.
+- [ ] T047 Uruchomić scenariusze z `specs/001-kalkulator-harmonogramu/quickstart.md` i poprawić rozbieżności między kontraktem a implementacją.
+- [ ] T048 Uruchomić `npm test`, `npm run typecheck`, `npm run lint` i `npm run build`; zapisać wynik kontroli przed PR.
+- [ ] T049 Sprawdzić zgodność implementacji ze `spec.md`, `plan.md`, `data-model.md` i `contracts/harmonogram-api.md` przed utworzeniem PR.
 
 ---
 
@@ -161,8 +175,10 @@ a ekran pokazuje wynik i pozwala pobrać kompletny CSV.
 - T005-T007 mogą być napisane równolegle przed implementacją US1.
 - T012-T014 mogą być napisane równolegle przed implementacją US2.
 - T018-T020 mogą być napisane równolegle przed implementacją US3.
-- T025-T026 mogą być napisane równolegle przed implementacją US4.
-- T032-T033 mogą być wykonane równolegle przed końcową walidacją.
+- T025-T028 mogą być napisane równolegle przed implementacją US4.
+- T033-T035 mogą być wykonywane równolegle po przygotowaniu adaptera danych T031-T032.
+- T037-T041 mogą być wykonywane równolegle, jeśli pracują na rozdzielnych komponentach lub sekcjach `app/page.tsx`.
+- T042-T044 mogą być wykonane równolegle przed końcową walidacją.
 
 ## Przykład wykonania równoległego: US1
 
@@ -191,11 +207,14 @@ T008-T011: implementacja domeny w src/domena/harmonogram.ts
 2. US2: zmienne POLSTR/WIBOR z testami zmian stopy.
 3. US3: nadpłaty w dwóch jawnie określonych trybach.
 4. US4: API, ekran i CSV.
-5. Faza 7: quickstart, lint, typecheck, testy i build przed PR.
+5. Faza 7: responsywność, dostępność, quickstart, lint, typecheck, testy i build przed PR.
 
 ## Kryteria ukończenia
 
 - Każde zadanie ma checkbox, identyfikator, właściwą etykietę historii lub brak etykiety dla zadań wspólnych oraz ścieżkę pliku.
 - Testy domenowe są pisane przed implementacją i obejmują liczbę kontrolną.
+- Design jest odwzorowany w `app/page.tsx`, a mock demonstracyjny jest wyraźnie oddzielony od adaptera `GET /api/harmonogram`.
+- Ekran obsługuje pusty wynik, ładowanie, błąd i sukces oraz jest używalny na desktopie i telefonie.
+- Formularz ma etykiety, focus, obsługę klawiatury i komunikaty dostępności.
 - `npm test`, `npm run typecheck` i `npm run build` przechodzą przed zgłoszeniem gotowości.
 - Suma kapitału jest równa kwocie kredytu, a saldo końcowe wynosi zero.
