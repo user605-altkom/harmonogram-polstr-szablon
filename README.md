@@ -142,6 +142,15 @@ Jeśli PowerShell odmówi uruchomienia skryptów `.ps1`, wykonaj raz: `Set-Execu
 
 Copilot code review czyta `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` i `AGENTS.md` z gałęzi PR. Reguły review dla plików `.ts` i `.tsx` są w `.github/instructions/review.instructions.md`, dopisuj tam własne. Skrypty `skrypty/review-pr.sh`, `skrypty/review-pr.ps1` (GitHub) i `skrypty/review-mr.ps1` (GitLab) robią to samo z terminala przez Copilot CLI. Tryb na sucho (`--dry-run` w bash, `-DryRun` w PowerShell) pobiera diff i robi review, ale zamiast publikować komentarz wypisuje go na ekran i zapisuje do `.work/review/review-<numer>.md`, co pozwala przećwiczyć rutynę na publicznym PR prowadzącego: `.\skrypty\review-pr.ps1 agentGreg/harmonogram-polstr-szablon 1 -DryRun`.
 
+### Weryfikacja CR-A przed review
+
+Na preview deployment Vercel sprawdź nadpłatę 30 000 zł po pierwszej racie
+dla kredytu 300 000 zł, 240 rat, WIBOR 3M 4,55% i marży 2,11 pp.
+Tryb `skrocOkres` powinien zachować ratę około 2 265,07 zł i zakończyć
+harmonogram po 196 ratach. Tryb `obnizRate` powinien zachować 240 rat i obniżyć
+ratę od drugiego miesiąca. W obu wariantach suma kapitału wraz z nadpłatą musi
+wynosić 300 000,00 zł, a saldo końcowe 0,00 zł.
+
 ## Wydanie
 
 Produkcja działa na Vercel i buduje się z GitHuba tym samym `npm run build`, który uruchamia workflow Actions. Push do `main` to nowa wersja produkcyjna, każdy PR ma własny adres podglądu w komentarzu bota Vercel. Kroki i zasada awaryjna w [KARTA.md](KARTA.md).
